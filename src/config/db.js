@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
 
-import { uri } from "./serverConfig.js";
+import { MONGODB_URI } from "./serverConfig.js";
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(uri);
+    await mongoose.connect(MONGODB_URI);
     console.log('Connected to MongoDB Atlas');
   } catch (error) {
     console.error('MongoDB connection error:', error);

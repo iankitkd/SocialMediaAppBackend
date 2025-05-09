@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose';
 import bcrypt from 'bcrypt';
 
-const saltRounds = 10;
+import { SALT_ROUNDS } from "../config/serverConfig.js"
 
 const userSchema = new Schema({
     email: { 
@@ -12,15 +12,23 @@ const userSchema = new Schema({
     password: { 
         type: String, 
         required: true,
-        select: false
+        // select: false
     },
 }, { timestamps: true });
 
 
+userSchema.set('toJSON', {
+  transform: (doc, ret) => {
+    delete ret.password;
+    delete ret.__v;
+    return ret;
+  }
+});
+
 userSchema.pre('save', async function (next) {
     if (!this.isModified('password')) return next();
   
-    this.password = await bcrypt.hash(this.password, saltRounds);
+    this.password = await bcrypt.hash(this.password, SALT_ROUNDS);
     next();
 });
 
