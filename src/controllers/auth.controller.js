@@ -5,6 +5,7 @@ const userService = new UserService();
 export const signup = async (req, res) => {
     try {
         const response = await userService.signup({
+            name: req.body.name,
             email: req.body.email,
             password: req.body.password,
         });
@@ -18,7 +19,7 @@ export const signup = async (req, res) => {
         return res.status(500).json({
             success: false,
             data: {},
-            message: "Something went wrong",
+            message: error.message || "Something went wrong",
             err: error
         })
     }
@@ -26,13 +27,16 @@ export const signup = async (req, res) => {
 
 export const signin = async (req, res) => {
     try {
-        const response = await userService.signin(req.body);
+        const response = await userService.signin({
+            email: req.body.email,
+            password: req.body.password,
+        });
 
         res.cookie('token', response.token, {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'Strict',
-            maxAge: 3600000 // 1 hour
+            maxAge: 24 * 60 * 60 * 1000
         });
         return res.status(200).json({
             success: true,
@@ -44,7 +48,7 @@ export const signin = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Something went wrong",
+            message: error.message || "Something went wrong",
             data: {},
             err: error
         });
@@ -67,9 +71,29 @@ export const signout = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            message: "Something went wrong",
+            message: error.message || "Something went wrong",
             err: error,
             data: {},
         });
+    }
+}
+
+export const currentUser = async (req, res) => {
+    try {
+        const user = req.user;  // user added through middleware
+        const response = await userService.getUserById(user.id);
+        return res.status(200).json({
+            success: true,
+            data: response,
+            message: "Successfully fetched current user",
+            err: {}
+        })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong",
+            err: error,
+            data: {},
+        }); 
     }
 }

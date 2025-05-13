@@ -4,15 +4,48 @@ import bcrypt from 'bcrypt';
 import { SALT_ROUNDS } from "../config/serverConfig.js"
 
 const userSchema = new Schema({
+    name: {
+        type: String,
+        min: [2, "Name must be at least 2 characters."],
+        trim: true,
+    },
     email: { 
         type: String, 
         required: true, 
-        unique: true
+        unique: true,
+        trim: true,
     },
     password: { 
         type: String, 
         required: true,
+        min: [6, "Password must be at least 6 characters."],
         // select: false
+    },
+    username: {
+        type: String,
+        unique: true,
+        trim: true,
+        min: [3, "Username must be at least 3 characters long."]
+    },
+    bio: {
+        type: String,
+        max: [500, "Bio cannot exceed 500 characters."],
+        trim: true,
+    },
+    gender: {
+        type: String,
+        enum: ['male', 'female', 'other'],
+    },
+    birthDate: {
+        type: Date,
+        max: [new Date(), "Birth date can not be in future."]
+    },
+    photoUrl: {
+        type: String,
+    },
+    isOnboarded: {
+        type: Boolean,
+        default: false,
     },
 }, { timestamps: true });
 

@@ -1,13 +1,19 @@
 import express from "express";
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import connectDB from "./config/db.js";
-import { PORT } from "./config/serverConfig.js";
+import { PORT, FRONTEND_ORIGIN } from "./config/serverConfig.js";
 
 import apiRoutes from './routes/index.js';
 
 const app = express();
 app.use(cookieParser());
+app.use(cors({
+  origin: FRONTEND_ORIGIN,
+  credentials: true 
+}));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
