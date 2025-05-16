@@ -81,7 +81,7 @@ class UserService {
         }
     }
 
-    async getUserByUsername(username) {
+    async getUserByUsername(username, currentUserId) {
         try {
             const user = await this.userRepository.findByUsername(username);
             if(!user) {
@@ -90,7 +90,9 @@ class UserService {
                     status: 404,
                 }
             }
-            return user;
+            const isCurrentUser = (currentUserId && currentUserId === user._id.toString());
+            
+            return {...user.toObject(), isCurrentUser};
         } catch (error) {
             throw error;
         }

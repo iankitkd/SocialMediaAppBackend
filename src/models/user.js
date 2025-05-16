@@ -23,6 +23,7 @@ const userSchema = new Schema({
     },
     username: {
         type: String,
+        sparse: true,
         unique: true,
         trim: true,
         min: [3, "Username must be at least 3 characters long."]
@@ -38,12 +39,18 @@ const userSchema = new Schema({
     },
     birthDate: {
         type: Date,
-        max: [new Date(), "Birth date can not be in future."]
     },
-    photoUrl: {
+    avatar: {
+        type: String,
+    },
+    location: {
         type: String,
     },
     isOnboarded: {
+        type: Boolean,
+        default: false,
+    },
+    isCurrentUser: {
         type: Boolean,
         default: false,
     },

@@ -34,6 +34,7 @@ export const updateUser = async (req, res) => {
 
 export const getUserByUsername = async (req, res) => {
     try {
+        const currentUserId = req.user?.id;
         const username = req.params.username;
         if(!username) {
             return res.status(400).json({
@@ -44,7 +45,7 @@ export const getUserByUsername = async (req, res) => {
             });
         }
 
-        const response = await userService.getUserByUsername(username);
+        const response = await userService.getUserByUsername(username, currentUserId);
         return res.status(200).json({
             success: true,
             data: response,
