@@ -6,6 +6,7 @@ import { validateUserAuth } from '../../middlewares/authRequestValidate.js';
 import { authenticate, optionalAuth } from '../../middlewares/authenticate.js';
 
 import { getUserByUsername, isUsernameAvailable, updateUser } from '../../controllers/user.controller.js';
+import { createPost } from '../../controllers/post.controller.js';
 
 
 const router = Router();
@@ -22,5 +23,8 @@ router.post('/signout', signout);
 router.post('/validate-username', isUsernameAvailable);
 router.get('/profile', currentUser);
 router.post('/profile/update', updateUser);
+
+
+router.post('/post/create', createPost);
 
 export default router;

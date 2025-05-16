@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
-  res.send("Social Media App");
+  res.status(200).send("Social Media App");
 });
 
 app.use('/api', apiRoutes);

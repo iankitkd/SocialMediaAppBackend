@@ -6,7 +6,7 @@ import { SALT_ROUNDS } from "../config/serverConfig.js"
 const userSchema = new Schema({
     name: {
         type: String,
-        min: [2, "Name must be at least 2 characters."],
+        minLength: [2, "Name must be at least 2 characters."],
         trim: true,
     },
     email: { 
@@ -18,7 +18,7 @@ const userSchema = new Schema({
     password: { 
         type: String, 
         required: true,
-        min: [6, "Password must be at least 6 characters."],
+        minLength: [6, "Password must be at least 6 characters."],
         // select: false
     },
     username: {
@@ -26,7 +26,7 @@ const userSchema = new Schema({
         sparse: true,
         unique: true,
         trim: true,
-        min: [3, "Username must be at least 3 characters long."]
+        minLength: [3, "Username must be at least 3 characters long."]
     },
     bio: {
         type: String,
@@ -54,6 +54,11 @@ const userSchema = new Schema({
         type: Boolean,
         default: false,
     },
+
+    posts: [{ 
+        type: Schema.Types.ObjectId, 
+        ref: 'Post',
+    }],
 }, { timestamps: true });
 
 
