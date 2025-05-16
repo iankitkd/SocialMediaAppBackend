@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 
 import UserRepository from "../repository/user.repository.js";
 
+import { reservedUsernames } from '../utils/data.js'
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/serverConfig.js"
 
 class UserService {
@@ -80,6 +81,21 @@ class UserService {
         }
     }
 
+    async getUserByUsername(username) {
+        try {
+            const user = await this.userRepository.findByUsername(username);
+            if(!user) {
+                throw {
+                    message: "User does not exist",
+                    status: 404,
+                }
+            }
+            return user;
+        } catch (error) {
+            throw error;
+        }
+    }
+
     async updateUser(userId, data) {
         try {            
             const user = await this.userRepository.update(userId, data);
@@ -91,6 +107,9 @@ class UserService {
 
     async isUsernameAvailable(username) {
         try {
+            if(reservedUsernames.includes(username)) {
+                return false;
+            }
             const user = await this.userRepository.findByUsername(username);
             if(user) {
                 return false;

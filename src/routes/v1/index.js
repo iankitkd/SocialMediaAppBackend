@@ -5,13 +5,15 @@ import { currentUser, signin, signout, signup } from "../../controllers/auth.con
 import { validateUserAuth } from '../../middlewares/authRequestValidate.js';
 import { authenticate } from '../../middlewares/authenticate.js';
 
-import { isUsernameAvailable, updateUser } from '../../controllers/user.controller.js';
+import { getUserByUsername, isUsernameAvailable, updateUser } from '../../controllers/user.controller.js';
 
 
 const router = Router();
 
 router.post('/signup', validateUserAuth, signup);
 router.post('/signin', validateUserAuth, signin);
+
+router.get('/user/:username', getUserByUsername);
 
 
 router.use(authenticate);
