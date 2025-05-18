@@ -4,7 +4,7 @@ const postSchema = new Schema({
     content: {
         type: String,
         required: true,
-        min: [2, "Content must be at least 2 characters."],
+        max: [280, "Content can't exceed 280 characters."],
         trim: true,
     },
     author: { 

@@ -23,6 +23,16 @@ class UserRepository extends CrudRepository {
             throw error;
         }
     }
+
+    async selectUserByUsername(username, select="_id") {
+        try {
+            const user = await User.findOne({ username }).select(select);
+            if(!user) return null;
+            return user;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default UserRepository;

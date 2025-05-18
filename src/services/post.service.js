@@ -11,9 +11,24 @@ class PostService {
         try {
             const data = {content, author: userId};
             const savedPost = await this.postRepository.create(data);
-
-            await this.userRepository.update(userId, { $push: { posts: savedPost._id }});
             return savedPost;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async deletePost(postId, userId) {
+        try {
+            const post = await this.postRepository.getPost(postId);
+            if(!post) {
+                throw new Error("Post does not exist", {status: 404});
+            }
+
+            if((post.author._id).toString() !== userId) {
+                throw new Error("Unauthorize to delete post", {status: 401});
+            }
+
+            await this.postRepository.destroy(postId);
         } catch (error) {
             throw error;
         }

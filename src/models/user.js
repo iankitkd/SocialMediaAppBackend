@@ -55,10 +55,10 @@ const userSchema = new Schema({
         default: false,
     },
 
-    posts: [{ 
-        type: Schema.Types.ObjectId, 
-        ref: 'Post',
-    }],
+    // posts: [{ 
+    //     type: Schema.Types.ObjectId, 
+    //     ref: 'Post',
+    // }],
 }, { timestamps: true });
 
 
