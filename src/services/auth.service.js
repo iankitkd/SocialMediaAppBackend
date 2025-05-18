@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 
-import UserRepository from "../repository/user.repository";
+import UserRepository from "../repository/user.repository.js";
 
 import { JWT_SECRET, JWT_EXPIRES_IN } from "../config/serverConfig.js"
 

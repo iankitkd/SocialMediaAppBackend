@@ -1,10 +1,12 @@
+import AuthService from "../services/auth.service.js";
 import UserService from "../services/user.service.js";
 
+const authService = new AuthService();
 const userService = new UserService();
 
 export const signup = async (req, res) => {
     try {
-        const response = await userService.signup({
+        const response = await authService.signup({
             name: req.body.name,
             email: req.body.email,
             password: req.body.password,
@@ -27,7 +29,7 @@ export const signup = async (req, res) => {
 
 export const signin = async (req, res) => {
     try {
-        const response = await userService.signin({
+        const response = await authService.signin({
             email: req.body.email,
             password: req.body.password,
         });

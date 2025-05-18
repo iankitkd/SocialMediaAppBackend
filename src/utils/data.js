@@ -70,5 +70,6 @@ export const reservedUsernames = [
   "marketplace",
   "groups",
   "pages",
-  "discover"
+  "discover",
+  "null",
 ];
