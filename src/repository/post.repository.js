@@ -6,7 +6,7 @@ class PostRepository extends CrudRepository {
         super(Post);
     }
 
-    async getPosts({ user, page = 1, limit = 10 }) {
+    async getUserPosts({ user, page = 1, limit = 10 }) {
         try {
             const [posts, total] = await Promise.all([
                 Post.find({ author: user._id })
@@ -53,6 +53,40 @@ class PostRepository extends CrudRepository {
                 select: 'username avatar name'
             });
             return post;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getPosts({page=1, limit=10}) {
+        try {
+            const [posts, total] = await Promise.all([
+                Post.find()
+                    .select('content createdAt author')
+                    .populate({
+                        path: 'author',
+                        select: 'username avatar name'
+                    })
+                    .sort({ createdAt: -1 })
+                    .skip((page - 1) * limit)
+                    .limit(limit)
+                    .lean(),
+
+                Post.countDocuments()
+            ]);
+
+            return {
+                posts: posts,
+                pagination: {
+                    page,
+                    limit,
+                    total,
+                    totalPages: Math.ceil(total / limit),
+                    hasNext: (page * limit) < total,
+                    hasPrev: page > 1
+                }
+            };
+
         } catch (error) {
             throw error;
         }

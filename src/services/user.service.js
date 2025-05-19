@@ -35,7 +35,7 @@ class UserService {
             const isCurrentUser = (currentUserId && currentUserId === user._id.toString());
             const modifiedUser = {...user.toObject(), isCurrentUser};
 
-            const {posts, pagination} = await this.postRepository.getPosts({user});
+            const {posts, pagination} = await this.postRepository.getUserPosts({user});
 
             return {user:modifiedUser, posts, pagination};
         } catch (error) {
@@ -67,19 +67,6 @@ class UserService {
         }
     }
 
-
-    async getUserPosts({username, page, limit}) {
-        try {
-            const user = await this.userRepository.selectUserByUsername(username, "_id username name avatar");
-            if(!user) {
-                throw new Error("User does not exist");
-            }
-            const response = await this.postRepository.getPosts({user, page, limit});
-            return response;
-        } catch (error) {
-            throw error;
-        }
-    }
 }
 
 export default UserService;

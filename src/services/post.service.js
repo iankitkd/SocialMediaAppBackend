@@ -33,6 +33,28 @@ class PostService {
             throw error;
         }
     }
+
+    async getPosts({page, limit}) {
+        try {
+            const response = await this.postRepository.getPosts({ page, limit});
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
+
+    async getUserPosts({username, page, limit}) {
+        try {
+            const user = await this.userRepository.selectUserByUsername(username, "_id username name avatar");
+            if(!user) {
+                throw new Error("User does not exist");
+            }
+            const response = await this.postRepository.getUserPosts({user, page, limit});
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default PostService;

@@ -61,3 +61,53 @@ export const deletePost = async (req, res) => {
         });
     }
 }
+
+export const getPosts = async (req, res) => {
+    try {
+        const {page, limit} = req.query;
+        const response = await postService.getPosts({page:parseInt(page), limit:parseInt(limit)});
+        return res.status(200).json({
+            success: true,
+            data: response,
+            message: "Successfully get latest posts",
+            err: {}
+        }); 
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong",
+            err: error,
+            data: {},
+        });
+    }
+}
+
+export const getUserPosts = async (req, res) => {
+    try {
+        const username = req.params.username;
+        const {page, limit} = req.query;
+        if(!username) {
+            return res.status(400).json({
+                success: false,
+                message: "Required details missing",
+                err: "Bad request",
+                data: {},
+            });
+        }
+        const response = await postService.getUserPosts({username, page: parseInt(page), limit: parseInt(limit)});
+        return res.status(200).json({
+            success: true,
+            data: response,
+            message: "Successfully get posts of user",
+            err: {}
+        }); 
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong",
+            err: error,
+            data: {},
+        });
+    }
+}
+

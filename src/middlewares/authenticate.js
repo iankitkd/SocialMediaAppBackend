@@ -25,8 +25,12 @@ export const authenticate = (req, res, next) => {
 export const optionalAuth = (req, res, next) => {
   const token = req.cookies.token || req.header("Authorization")?.replace("Bearer ", "");
   if (token) {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    req.user = decoded;
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        req.user = decoded;
+    } catch (error) {
+
+    }
   }
   next();
 };
