@@ -7,6 +7,7 @@ import { authenticate, optionalAuth } from '../../middlewares/authenticate.js';
 
 import { getUserByUsername, isUsernameAvailable, updateUser } from '../../controllers/user.controller.js';
 import { createPost, deletePost, getPosts, getUserPosts } from '../../controllers/post.controller.js';
+import { getLikedPosts, likePost, unlikePost } from '../../controllers/like.controller.js';
 
 
 const router = Router();
@@ -17,8 +18,9 @@ router.post('/signin', validateUserAuth, signin);
 
 router.get('/users/:username', optionalAuth, getUserByUsername);
 
-router.get('/users/:username/posts', getUserPosts);
-router.get('/posts', getPosts);
+router.get('/users/:username/posts', optionalAuth, getUserPosts);
+
+router.get('/posts', optionalAuth, getPosts);
 
 
 // Private routes
@@ -31,5 +33,10 @@ router.patch('/profile', updateUser);
 
 router.post('/posts', createPost);
 router.delete('/posts/:postId', deletePost);
+
+router.post('/posts/:postId/like', likePost);
+router.delete('/posts/:postId/like', unlikePost);
+
+router.get('/profile/liked-posts', getLikedPosts);
 
 export default router;

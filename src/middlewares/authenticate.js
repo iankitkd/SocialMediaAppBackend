@@ -31,6 +31,8 @@ export const optionalAuth = (req, res, next) => {
     } catch (error) {
 
     }
+  } else {
+    req.user = {id: null, email: null};
   }
   next();
 };

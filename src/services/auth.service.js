@@ -64,6 +64,21 @@ class AuthService {
             throw error;
         }
     }
+
+
+    async getCurrentUser(userId) {
+        try {
+            const user = await this.userRepository.get(userId);
+            if(!user) {
+                throw {
+                    message: "User does not exist"
+                }
+            }
+            return { ...user.toObject(), isCurrentUser: true};
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default AuthService;

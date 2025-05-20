@@ -13,6 +13,23 @@ const postSchema = new Schema({
         required: true 
     },
     
+    commentsCount: {
+        type: Number,
+        default: 0,
+    },
+    likesCount: {
+        type: Number,
+        default: 0,
+    },
+    isLiked: {
+        type: Boolean,
+        default: false,
+    },
+    isOwner: {
+        type: Boolean,
+        default: false,
+    },
+    
 }, { timestamps: true });
 
 const Post = model('Post', postSchema);

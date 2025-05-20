@@ -1,38 +1,8 @@
-import PostService from "../services/post.service.js";
+import LikeService from "../services/like.service.js";
 
-const postService = new PostService();
+const likeService = new LikeService();
 
-export const createPost = async (req, res) => {
-    try {
-        const {id} = req.user;
-        const {content} = req.body;
-        if(!id || !content) {
-            return res.status(400).json({
-                success: false,
-                message: "Required details missing",
-                err: "Bad request",
-                data: {},
-            });
-        }
-
-        const response = await postService.createPost(content, id);
-         return res.status(201).json({
-            success: true,
-            data: response,
-            message: "Successfully created post",
-            err: {}
-        }); 
-    } catch (error) {
-        return res.status(error.status || 500).json({
-            success: false,
-            message: error.message || "Something went wrong",
-            err: error,
-            data: {},
-        });
-    }
-}
-
-export const deletePost = async (req, res) => {
+export const likePost = async (req, res) => {
     try {
         const {id} = req.user;
         const postId = req.params.postId;
@@ -45,11 +15,11 @@ export const deletePost = async (req, res) => {
             });
         }
 
-        const response = await postService.deletePost(postId, id);
+        const response = await likeService.likePost(postId, id);
          return res.status(200).json({
             success: true,
             data: response,
-            message: "Successfully deleted post",
+            message: "Successfully like post",
             err: {}
         }); 
     } catch (error) {
@@ -62,33 +32,11 @@ export const deletePost = async (req, res) => {
     }
 }
 
-export const getPosts = async (req, res) => {
+export const unlikePost = async (req, res) => {
     try {
-        const id = req.user.id;
-        const {page, limit} = req.query;
-        const response = await postService.getPosts({currentUserId: id, page: page && parseInt(page), limit: limit && parseInt(limit)});
-        return res.status(200).json({
-            success: true,
-            data: response,
-            message: "Successfully get latest posts",
-            err: {}
-        }); 
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message || "Something went wrong",
-            err: error,
-            data: {},
-        });
-    }
-}
-
-export const getUserPosts = async (req, res) => {
-    try {
-        const id = req.user.id;
-        const username = req.params.username;
-        const {page, limit} = req.query;
-        if(!username) {
+        const {id} = req.user;
+        const postId = req.params.postId;
+        if(!id || !postId) {
             return res.status(400).json({
                 success: false,
                 message: "Required details missing",
@@ -96,15 +44,16 @@ export const getUserPosts = async (req, res) => {
                 data: {},
             });
         }
-        const response = await postService.getUserPosts({username, currentUserId: id , page: page && parseInt(page), limit: limit && parseInt(limit)});
-        return res.status(200).json({
+
+        const response = await likeService.unlikePost(postId, id);
+         return res.status(200).json({
             success: true,
             data: response,
-            message: "Successfully get posts of user",
+            message: "Successfully unlike post",
             err: {}
         }); 
     } catch (error) {
-        return res.status(500).json({
+        return res.status(error.status || 500).json({
             success: false,
             message: error.message || "Something went wrong",
             err: error,
@@ -113,3 +62,32 @@ export const getUserPosts = async (req, res) => {
     }
 }
 
+export const getLikedPosts = async (req, res) => {
+    try {
+        const id = req.user.id;
+        const {page, limit} = req.query;
+        if(!id) {
+            return res.status(400).json({
+                success: false,
+                message: "Required details missing",
+                err: "Bad request",
+                data: {},
+            });
+        }
+
+        const response = await likeService.getCurrentUserLikedPosts({currentUserId: id, page: page && parseInt(page), limit: limit && parseInt(limit)});
+         return res.status(200).json({
+            success: true,
+            data: response,
+            message: "Successfully fetched liked posts",
+            err: {}
+        }); 
+    } catch (error) {
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || "Something went wrong",
+            err: error,
+            data: {},
+        });
+    }
+}

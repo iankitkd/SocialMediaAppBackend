@@ -34,22 +34,22 @@ class PostService {
         }
     }
 
-    async getPosts({page, limit}) {
+    async getPosts({currentUserId, page, limit}) {
         try {
-            const response = await this.postRepository.getPosts({ page, limit});
+            const response = await this.postRepository.getPosts({ currentUserId, page, limit});
             return response;
         } catch (error) {
             throw error;
         }
     }
 
-    async getUserPosts({username, page, limit}) {
+    async getUserPosts({username, currentUserId, page, limit}) {
         try {
             const user = await this.userRepository.selectUserByUsername(username, "_id username name avatar");
             if(!user) {
                 throw new Error("User does not exist");
             }
-            const response = await this.postRepository.getUserPosts({user, page, limit});
+            const response = await this.postRepository.getPosts({user, currentUserId, page, limit});
             return response;
         } catch (error) {
             throw error;

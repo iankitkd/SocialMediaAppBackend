@@ -1,8 +1,6 @@
 import AuthService from "../services/auth.service.js";
-import UserService from "../services/user.service.js";
 
 const authService = new AuthService();
-const userService = new UserService();
 
 export const signup = async (req, res) => {
     try {
@@ -83,7 +81,7 @@ export const signout = async (req, res) => {
 export const currentUser = async (req, res) => {
     try {
         const user = req.user;  // user added through middleware
-        const response = await userService.getUserById(user.id);
+        const response = await authService.getCurrentUser(user.id);
         return res.status(200).json({
             success: true,
             data: response,
