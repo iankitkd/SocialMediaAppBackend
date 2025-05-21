@@ -49,12 +49,18 @@ class LikeService {
                 throw new Error("User does not exist");
             }
             const {likedPosts, pagination} = await this.likeRepository.getLikedPostsByUserId({userId: currentUserId, page, limit});
+            
+            if(likedPosts.length == 0) {
+                return {likedPosts: [], pagination};
+            }
+
             const updatedPosts = likedPosts.map(post => ({
                 ...post,
                 isLiked: true,
-                isOwner: (post.author._id).toString() === currentUserId,
+                isOwner: post.author._id.toString() === currentUserId,
             }));
-            return {...updatedPosts, pagination};
+
+            return {likedPosts: updatedPosts, pagination};
         } catch (error) {
             throw error;
         }
