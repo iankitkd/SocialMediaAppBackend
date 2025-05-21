@@ -1,10 +1,12 @@
 import PostRepository from "../repository/post.repository.js";
 import UserRepository from "../repository/user.repository.js";
+import LikeRepository from "../repository/like.repository.js";
 
 class PostService {
     constructor() {
         this.postRepository = new PostRepository();
         this.userRepository = new UserRepository();
+        this.likeRepository = new LikeRepository();
     }
 
     async createPost(content, userId) {
@@ -29,6 +31,9 @@ class PostService {
             }
 
             await this.postRepository.destroy(postId);
+
+            // delete all likes on that post
+            await this.likeRepository.destroyManyLikes({post: postId});
         } catch (error) {
             throw error;
         }

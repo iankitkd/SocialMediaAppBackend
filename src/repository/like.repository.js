@@ -46,6 +46,15 @@ class LikeRepository extends CrudRepository {
             throw error;
         }
     }
+
+    async destroyManyLikes(data) {
+        try {
+            const response = await Like.deleteMany(data);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default LikeRepository;
