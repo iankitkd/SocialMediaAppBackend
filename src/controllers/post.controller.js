@@ -5,7 +5,7 @@ const postService = new PostService();
 export const createPost = async (req, res) => {
     try {
         const {id} = req.user;
-        const {content} = req.body;
+        const {content, parentPostId} = req.body;
         if(!id || !content) {
             return res.status(400).json({
                 success: false,
@@ -15,7 +15,7 @@ export const createPost = async (req, res) => {
             });
         }
 
-        const response = await postService.createPost(content, id);
+        const response = await postService.createPost(content, id, parentPostId);
          return res.status(201).json({
             success: true,
             data: response,

@@ -24,15 +24,17 @@ class PostRepository extends CrudRepository {
         }
     }
 
-    async getPosts({user, currentUserId, page=1, limit=10}) {
+    async getPosts({match, user, currentUserId, page=1, limit=10}) {
         try {
             const currentUserIdObj = Types.ObjectId.isValid(currentUserId) ? Types.ObjectId.createFromHexString(currentUserId) : null;
 
             const aggregationPipeline = [];
 
             // if fetching user posts, add match condition
-            if(user) {
-                aggregationPipeline.push({ $match: {author: user._id}});
+            if(match) {
+                aggregationPipeline.push({ $match: match});
+            } else {
+                aggregationPipeline.push({ $match: {parent: null}});
             }
 
             // sorting and pagination
@@ -114,6 +116,8 @@ class PostRepository extends CrudRepository {
                         content: 1,
                         createdAt: 1,
                         likesCount: 1,
+                        commentsCount: 1,
+                        parent: 1,
                         isLiked: 1,
                         isOwner: 1,
                         // author: 1,
@@ -125,7 +129,7 @@ class PostRepository extends CrudRepository {
                 }
             );
 
-            const data = user ? { author: user._id } : null;
+            const data = match ? match : {parent: null};
 
             const [posts, total] = await Promise.all([
                 Post.aggregate(aggregationPipeline),
@@ -143,6 +147,16 @@ class PostRepository extends CrudRepository {
                     hasPrev: page > 1
                 }
             };
+        } catch (error) {
+            throw error;
+        }
+    }
+
+
+    async destroyManyPosts(data) {
+        try {
+            const response = await Post.deleteMany(data);
+            return response;
         } catch (error) {
             throw error;
         }

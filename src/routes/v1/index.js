@@ -8,6 +8,7 @@ import { authenticate, optionalAuth } from '../../middlewares/authenticate.js';
 import { getUserByUsername, isUsernameAvailable, updateUser } from '../../controllers/user.controller.js';
 import { createPost, deletePost, getPostDetails, getPosts, getUserPosts } from '../../controllers/post.controller.js';
 import { getLikedPosts, likePost, unlikePost } from '../../controllers/like.controller.js';
+import { getPostReplies, getUserReplies } from '../../controllers/reply.controller.js';
 
 
 const router = Router();
@@ -19,9 +20,11 @@ router.post('/signin', validateUserAuth, signin);
 router.get('/users/:username', optionalAuth, getUserByUsername);
 
 router.get('/users/:username/posts', optionalAuth, getUserPosts);
+router.get('/users/:username/replies', optionalAuth, getUserReplies);
 
 router.get('/posts', optionalAuth, getPosts);
 router.get('/posts/:postId', optionalAuth, getPostDetails);
+router.get('/posts/:postId/replies', optionalAuth, getPostReplies);
 
 
 // Private routes
@@ -32,6 +35,7 @@ router.post('/validate-username', isUsernameAvailable);
 router.get('/profile', currentUser);
 router.patch('/profile', updateUser);
 
+// these two are use for both post and reply
 router.post('/posts', createPost);
 router.delete('/posts/:postId', deletePost);
 

@@ -9,10 +9,15 @@ class PostService {
         this.likeRepository = new LikeRepository();
     }
 
-    async createPost(content, userId) {
+    async createPost(content, userId, parentPostId) {
         try {
-            const data = {content, author: userId};
+            const parent = parentPostId ? parentPostId: null;
+            const data = {content, author: userId, parent};
             const savedPost = await this.postRepository.create(data);
+
+            if(parent) {
+                this.postRepository.update(parentPostId, { $inc: { commentsCount: 1 } })
+            }
             return savedPost;
         } catch (error) {
             throw error;
@@ -30,10 +35,16 @@ class PostService {
                 throw new Error("Unauthorize to delete post", {status: 401});
             }
 
-            await this.postRepository.destroy(postId);
-
-            // delete all likes on that post
-            await this.likeRepository.destroyManyLikes({post: postId});
+            if(post.parent) {
+                await this.postRepository.update(post.parent, { $inc: { commentsCount: -1 } })
+            }
+            
+            // delete post and all likes & replies on that post
+            await Promise.all([
+                this.postRepository.destroy(postId),
+                this.postRepository.destroyManyPosts({parent: postId}),
+                this.likeRepository.destroyManyLikes({post: postId}),
+            ]);
         } catch (error) {
             throw error;
         }
@@ -41,7 +52,8 @@ class PostService {
 
     async getPosts({currentUserId, page, limit}) {
         try {
-            const response = await this.postRepository.getPosts({ currentUserId, page, limit});
+            const match = {parent: null};
+            const response = await this.postRepository.getPosts({match, currentUserId, page, limit});
             return response;
         } catch (error) {
             throw error;
@@ -54,7 +66,8 @@ class PostService {
             if(!user) {
                 throw new Error("User does not exist");
             }
-            const response = await this.postRepository.getPosts({user, currentUserId, page, limit});
+            const match = {author: user._id, parent: null};
+            const response = await this.postRepository.getPosts({match, user, currentUserId, page, limit});
             return response;
         } catch (error) {
             throw error;

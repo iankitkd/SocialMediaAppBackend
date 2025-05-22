@@ -3,6 +3,16 @@ class CrudRepository {
         this.model = model;
     }
 
+    async isExists(data) {
+        try {
+            const exists = await this.model.exists(data);
+            return exists;
+        } catch (error) {
+            console.log('Something went wrong in crud repository');
+            throw error;
+        }
+    }
+
     async create(data) {
         try {
             const response = await this.model.create(data);

@@ -31,11 +31,10 @@ class LikeService {
         try {
             const data = {post: postId, user: userId};
             const response = await this.likeRepository.destroyOne(data);
-            if(response) {
-                await this.postRepository.update(postId, { $inc: { likesCount: -1 } });
-            } else {
+            if(!response) {
                 throw new Error("Like does not exist");
             }
+            await this.postRepository.update(postId, { $inc: { likesCount: -1 } });
             return response;
         } catch (error) {
             throw error;
