@@ -6,7 +6,7 @@ import { validateUserAuth } from '../../middlewares/authRequestValidate.js';
 import { authenticate, optionalAuth } from '../../middlewares/authenticate.js';
 
 import { getUserByUsername, isUsernameAvailable, updateUser } from '../../controllers/user.controller.js';
-import { createPost, deletePost, getPosts, getUserPosts } from '../../controllers/post.controller.js';
+import { createPost, deletePost, getPostDetails, getPosts, getUserPosts } from '../../controllers/post.controller.js';
 import { getLikedPosts, likePost, unlikePost } from '../../controllers/like.controller.js';
 
 
@@ -21,6 +21,7 @@ router.get('/users/:username', optionalAuth, getUserByUsername);
 router.get('/users/:username/posts', optionalAuth, getUserPosts);
 
 router.get('/posts', optionalAuth, getPosts);
+router.get('/posts/:postId', optionalAuth, getPostDetails);
 
 
 // Private routes

@@ -60,6 +60,22 @@ class PostService {
             throw error;
         }
     }
+
+    async getPostDetails({postId, currentUserId}) {
+        try {
+            const post = await this.postRepository.getPost(postId);
+            if(!post) {
+                throw { message: "Post does not exist", status: 404};
+            }
+            const like = await this.likeRepository.getOne({user:currentUserId, post: postId});
+            const isLiked = !!like;
+            
+            const isOwner = post.author._id.toString() === currentUserId;
+            return {...post.toObject(), isOwner, isLiked};
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default PostService;

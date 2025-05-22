@@ -10,9 +10,13 @@ class PostRepository extends CrudRepository {
 
     async getPost(postId) {
         try {
+            const isValid = Types.ObjectId.isValid(postId);
+            if(!isValid) {
+                throw { message: "Post id is not valid", status: 400};
+            }
             const post = await Post.findById(postId).populate({
                 path: 'author',
-                select: 'username avatar name'
+                select: '_id username avatar name'
             });
             return post;
         } catch (error) {

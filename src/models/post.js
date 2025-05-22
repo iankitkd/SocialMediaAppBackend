@@ -12,6 +12,12 @@ const postSchema = new Schema({
         ref: 'User',
         required: true 
     },
+
+    parent: {
+        type: Schema.Types.ObjectId,
+        ref: 'Post',
+        default: null,
+    },
     
     commentsCount: {
         type: Number,

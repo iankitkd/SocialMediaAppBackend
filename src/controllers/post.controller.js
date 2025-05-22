@@ -113,3 +113,32 @@ export const getUserPosts = async (req, res) => {
     }
 }
 
+export const getPostDetails = async (req, res) => {
+   try {
+        const id = req.user.id;
+        const {postId} = req.params;
+        if(!postId) {
+            return res.status(400).json({
+                success: false,
+                message: "Required details missing",
+                err: "Bad request",
+                data: {},
+            });
+        }
+        
+        const response = await postService.getPostDetails({postId, currentUserId: id});
+        return res.status(200).json({
+            success: true,
+            data: response,
+            message: "Successfully get post details",
+            err: {}
+        }); 
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong",
+            err: error,
+            data: {},
+        });
+    }
+}
