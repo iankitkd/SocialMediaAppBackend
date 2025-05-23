@@ -24,13 +24,13 @@ class PostRepository extends CrudRepository {
         }
     }
 
-    async getPosts({match, user, currentUserId, page=1, limit=10}) {
+    async getPosts({match, user, currentUserId, page=1, limit=10, populateParent=false}) {
         try {
             const currentUserIdObj = Types.ObjectId.isValid(currentUserId) ? Types.ObjectId.createFromHexString(currentUserId) : null;
 
             const aggregationPipeline = [];
 
-            // if fetching user posts, add match condition
+            // add match condition
             if(match) {
                 aggregationPipeline.push({ $match: match});
             } else {
@@ -74,6 +74,74 @@ class PostRepository extends CrudRepository {
                     }
                 );
             }
+
+            // populate parent with author, updated isLiked and isOwner
+            if (populateParent) {
+                aggregationPipeline.push(
+                    // Lookup parent post
+                    {
+                        $lookup: {
+                            from: 'posts',
+                            localField: 'parent',
+                            foreignField: '_id',
+                            as: 'parent'
+                        }
+                    },
+                    { $unwind: '$parent' },
+
+                    // Lookup parent author and embed inside parent.author
+                    {
+                        $lookup: {
+                            from: 'users',
+                            let: { authorId: '$parent.author' },
+                            pipeline: [
+                                { $match: { $expr: { $eq: ['$_id', '$$authorId'] } } },
+                                { $project: {_id: 1, name: 1, username: 1, avatar: 1}},
+                                { $limit: 1 }
+                            ],
+                            as: 'parentAuthor'
+                        }
+                    },
+                    { $unwind: { path: '$parentAuthor', preserveNullAndEmptyArrays: true } },
+
+                    // Set parent.author to parentAuthor
+                    { $set: { 'parent.author': '$parentAuthor' } }
+                );
+
+                if (currentUserIdObj) {
+                  aggregationPipeline.push(
+                    // Lookup likes for parent post
+                    {
+                        $lookup: {
+                            from: 'likes',
+                            let: { postId: '$parent._id' },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: {
+                                            $and: [
+                                                { $eq: ['$post', '$$postId'] },
+                                                { $eq: ['$user', currentUserIdObj] }
+                                            ]
+                                        }
+                                    }
+                                },
+                                { $limit: 1 }
+                            ],
+                            as: 'parentLikedByCurrentUser'
+                        }
+                    },
+                    // Set isLiked and isOwner inside parent
+                    {
+                        $set: {
+                            'parent.isLiked': { $gt: [{ $size: '$parentLikedByCurrentUser' }, 0] },
+                            'parent.isOwner': { $eq: ['$parent.author._id', currentUserIdObj] }
+                        }
+                    }
+                  );
+                }
+            }
+
 
             // if currentuser present, add isLiked and isOwner field
             if(currentUserIdObj) {

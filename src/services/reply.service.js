@@ -26,7 +26,7 @@ class ReplyService {
                 throw new Error("User does not exist");
             }
             const match = {author: user._id, parent: { $ne: null } };
-            const response = await this.postRepository.getPosts({match, user, currentUserId, page, limit});
+            const response = await this.postRepository.getPosts({match, user, currentUserId, page, limit, populateParent: true});
             return response;
         } catch (error) {
             throw error;
