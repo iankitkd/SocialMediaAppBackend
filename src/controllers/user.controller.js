@@ -89,3 +89,31 @@ export const isUsernameAvailable = async (req, res) => {
         });
     }
 }
+
+export const searchUser = async (req, res) => {
+    try {
+        const searchString = req.query.q;
+        if(!searchString) {
+            return res.status(400).json({
+                success: false,
+                message: "Required details missing",
+                err: "Bad request",
+                data: {},
+            });
+        }
+        const response = await userService.searchUser(searchString);
+        return res.status(200).json({
+            success: true,
+            data: response,
+            message: "Successfully fetched users",
+            err: {}
+        }); 
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message || "Something went wrong",
+            err: error,
+            data: {},
+        });
+    }
+}

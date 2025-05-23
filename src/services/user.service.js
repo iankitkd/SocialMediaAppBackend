@@ -53,6 +53,14 @@ class UserService {
         }
     }
 
+    async searchUser(searchString) {
+        try {
+            const response = await this.userRepository.searchUsers(searchString);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
 
 export default UserService;

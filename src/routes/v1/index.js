@@ -5,7 +5,7 @@ import { currentUser, signin, signout, signup } from "../../controllers/auth.con
 import { validateUserAuth } from '../../middlewares/authRequestValidate.js';
 import { authenticate, optionalAuth } from '../../middlewares/authenticate.js';
 
-import { getUserByUsername, isUsernameAvailable, updateUser } from '../../controllers/user.controller.js';
+import { getUserByUsername, isUsernameAvailable, searchUser, updateUser } from '../../controllers/user.controller.js';
 import { createPost, deletePost, getPostDetails, getPosts, getUserPosts } from '../../controllers/post.controller.js';
 import { getLikedPosts, likePost, unlikePost } from '../../controllers/like.controller.js';
 import { getPostReplies, getUserReplies } from '../../controllers/reply.controller.js';
@@ -17,6 +17,7 @@ const router = Router();
 router.post('/signup', validateUserAuth, signup);
 router.post('/signin', validateUserAuth, signin);
 
+router.get('/users/search', searchUser);
 router.get('/users/:username', optionalAuth, getUserByUsername);
 
 router.get('/users/:username/posts', optionalAuth, getUserPosts);

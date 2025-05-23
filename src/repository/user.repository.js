@@ -43,6 +43,24 @@ class UserRepository extends CrudRepository {
             throw error;
         }
     }
+
+    async searchUsers(searchString) {
+        try {
+            const users = await User.find({
+                $or: [
+                    { username: { $regex: searchString, $options: 'i' } },
+                    { name: { $regex: searchString, $options: 'i' } },
+                ],
+            })
+            .select("_id username name avatar")
+            .limit(10);
+
+            return users;
+        } catch (error) {
+            throw error;
+        }
+    };
+
 }
 
 export default UserRepository;
