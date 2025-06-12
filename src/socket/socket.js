@@ -15,15 +15,14 @@ export const setupSocket = (server) => {
     }
   });
 
-  io.use(authenticateSocket);
+  // io.use(authenticateSocket);
 
   io.on('connection', (socket) => {
-    const senderId = socket.user.id;
-    console.log(`User connected: ${senderId}`);
+    // const senderId = socket.user.id;
 
     // On sending message
     socket.on('sendMessage', async (data) => {
-      const { receiverId, content } = data;
+      const { senderId, receiverId, content } = data;
       await messageService.createMessage({content, senderId, receiverId});
 
       const roomId = [senderId, receiverId].sort().join('_');
@@ -38,7 +37,7 @@ export const setupSocket = (server) => {
     });
 
     socket.on('disconnect', () => {
-      console.log(`User disconnected: `);
+
     });
   });
 };
