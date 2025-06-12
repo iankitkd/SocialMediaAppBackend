@@ -9,6 +9,7 @@ import { getUserByUsername, isUsernameAvailable, searchUser, updateUser } from '
 import { createPost, deletePost, getPostDetails, getPosts, getUserPosts } from '../../controllers/post.controller.js';
 import { getLikedPosts, likePost, unlikePost } from '../../controllers/like.controller.js';
 import { getPostReplies, getUserReplies } from '../../controllers/reply.controller.js';
+import { getConversations, getMessages } from '../../controllers/message.controller.js';
 
 
 const router = Router();
@@ -44,5 +45,8 @@ router.post('/posts/:postId/like', likePost);
 router.delete('/posts/:postId/like', unlikePost);
 
 router.get('/profile/liked-posts', getLikedPosts);
+
+router.get('/messages/:receiverId', getMessages);
+router.get('/conversations', getConversations);
 
 export default router;

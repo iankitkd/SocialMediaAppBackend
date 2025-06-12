@@ -28,9 +28,8 @@ app.get('/', (req, res) => {
 app.use('/api', apiRoutes);
 
 
-setupSocket(server);
-
 server.listen(PORT, async()=> {
-    console.log(`Server started at PORT ${PORT}`);
-    await connectDB();
+  console.log(`Server started at PORT ${PORT}`);
+  await connectDB();
+  setupSocket(server);
 })
