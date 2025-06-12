@@ -11,7 +11,7 @@ class ConversationRepository extends CrudRepository {
             const conversations = await Conversation.find({ participants: userId })
                 .sort({ updatedAt: -1 })
                 .populate('participants', '_id name username avatar')
-                .populate('lastMessage')
+                .populate('lastMessage');
             
             return conversations;
         } catch (error) {
