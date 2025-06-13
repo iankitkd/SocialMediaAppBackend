@@ -22,10 +22,14 @@ export const setupSocket = (server) => {
 
     // On sending message
     socket.on('sendMessage', async (data) => {
-      const { senderId, receiverId, content } = data;
-      await messageService.createMessage({content, senderId, receiverId});
+      const { senderId, receiverId, content, isTemporaryMessage } = data;
 
-      const roomId = [senderId, receiverId].sort().join('_');
+      if(!isTemporaryMessage) {
+        await messageService.createMessage({content, senderId, receiverId});
+      }
+
+      const concatStr = isTemporaryMessage ? "_temp" : "";
+      const roomId = [senderId, receiverId].sort().join('_').concat(concatStr);
 
       // Send message to both participants
       io.to(roomId).emit('receiveMessage', {content, senderId, roomId, createdAt: Date.now()});
@@ -34,6 +38,19 @@ export const setupSocket = (server) => {
     // Join chat room
     socket.on('joinRoom', (roomId) => {
       socket.join(roomId);
+    });
+
+    // join temporary chat room (disappearing chat)
+    socket.on('joinTempRoom', ({ roomId, username }) => {
+      const tempRoomId = `${roomId}_temp`;
+      socket.join(tempRoomId);
+      io.to(roomId).emit('receiveMessage', {content: `${username} started Temporary chat`, senderId:"system", roomId:roomId, type: "system", createdAt: Date.now()});
+    });
+
+    socket.on('leaveTempRoom', ({ roomId, username }) => {
+      const tempRoomId = `${roomId}_temp`;
+      socket.leave(tempRoomId);
+      io.to(roomId).emit('receiveMessage', {content: `${username} leave Temporary chat`, senderId:"system", roomId:roomId, type: "system", createdAt: Date.now()});
     });
 
     socket.on('disconnect', () => {
