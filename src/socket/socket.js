@@ -66,6 +66,18 @@ export const setupSocket = (server) => {
       socket.emit("userStatus", { userId, online: isOnline });
     });
 
+
+    // When user starts typing
+    socket.on("typing", ({ roomId, userId }) => {
+      socket.to(roomId).emit("typing", { userId });
+    });
+
+    // When user stops typing
+    socket.on("stopTyping", ({ roomId, userId }) => {
+      socket.to(roomId).emit("stopTyping", { userId });
+    });
+    
+
     // on disconnect
     socket.on('disconnect', () => {
       for (const [userId, id] of onlineUsers.entries()) {
